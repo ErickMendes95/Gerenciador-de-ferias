@@ -2,6 +2,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useParams } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 export default function EmployeeDetails() {
   const { id } = useParams();
@@ -9,7 +12,6 @@ export default function EmployeeDetails() {
   const [numVacations, setNumVacations] = useState(1);
   const [vacations, setVacations] = useState([{ startDate: "", endDate: "" }]);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-  const [isSuccessMessageVisible, setIsSuccessMessageVisible] = useState(false);
 
   const handleNumVacationsChange = (e) => {
     const num = parseInt(e.target.value);
@@ -46,19 +48,19 @@ export default function EmployeeDetails() {
     }));
 
     try {
+      setIsButtonDisabled(true);
       await axios.post(`http://localhost:4000/vacation`, dataToSend, {
         headers: { employeeId: id },
       });
 
-      setIsSuccessMessageVisible(true);
+      toast.success("Férias cadastradas com sucesso!")
 
       setTimeout(() => {
-        setIsSuccessMessageVisible(false);
         window.location.href = "/";
       }, 3000);
     } catch (error) {
-      console.log(error);
-      throw new Error(`${error.message}, ${error.response.data}`);
+      setIsButtonDisabled(false);
+      toast.error(`${error.message}, ${error.response.data}`);
     }
   };
 
@@ -120,11 +122,7 @@ export default function EmployeeDetails() {
           >
             Cadastrar as Férias
           </button>
-          {isSuccessMessageVisible && (
-            <p className="mt-2 text-green-500">
-              Férias cadastradas com sucesso!
-            </p>
-          )}
+          <ToastContainer/>
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ function EmployeeCard({ employee, isSelected, onClick }) {
   return (
     <div
       className={`bg-white border flex items-center justify-between p-2 mb-2 rounded cursor-pointer ${
-        isSelected ? 'bg-blue-300' : ''
+        isSelected ? 'bg-blue-200' : ''
       }`}
       onClick={onClick}
     >

@@ -46,9 +46,20 @@ export default function Home() {
             ))
           )}
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-between">
+        <Link
+            href={`/employee/cadastro`}
+            passHref
+          >
+            <button
+              className={`mt-4 bg-green-500 hover:bg-green-600 cursor-pointer
+               text-white py-2 px-4 rounded-full justify-end`}
+            >
+              Cadastrar novo funcionário
+            </button>
+          </Link>
           <Link
-            href={`/employee/${selectedEmployee?.id}`}
+            href={`/employee/${selectedEmployee?.id}/vacation`}
             passHref
             disabled={!selectedEmployee}
           >
