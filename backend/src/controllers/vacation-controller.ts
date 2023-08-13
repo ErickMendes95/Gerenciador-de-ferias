@@ -6,8 +6,9 @@ import vacationService from "../services/vacation-service";
 class VacationController {
   async create(req: Request, res: Response) {
     const vacation: Vacation[] = req.body;
+    const id = Number(req.headers.employeeid)
     try {
-      const vacationCreated = await vacationService.create(vacation);
+      const vacationCreated = await vacationService.create(id, vacation);
       return res.status(httpStatus.CREATED).send(vacationCreated);
     } catch (error: any) {
       if (error.name === "BadRequestError") {

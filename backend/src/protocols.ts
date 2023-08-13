@@ -10,7 +10,6 @@ export type ApplicationError = {
 };
 
 export type Vacation = {
-  employeeId: number;
   startDate: Date;
   endDate: Date;
 };

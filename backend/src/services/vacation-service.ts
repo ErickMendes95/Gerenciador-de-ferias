@@ -28,7 +28,7 @@ function isValidVacationDays(vacation: Vacation[]) {
     throw badResquestError("One of the vacations need to be at least 14 days");
 
   if (durationInDays !== 30)
-    throw badResquestError("Number of days is different than 30");
+    throw badResquestError("Sum of number of days is different than 30");
 }
 function isOverlappingVacation(
   vacations: Vacation[],
@@ -52,9 +52,10 @@ function isOverlappingVacation(
   }
 }
 class VacationService {
-  async create(vacation: Vacation[]) {
+  async create(employeeId: number, vacation: Vacation[]) {
+    if (!employeeId) throw badResquestError("Employee Id is required");
+
     vacation.map((v) => {
-      if (!v.employeeId) throw badResquestError("Employee Id is required");
       if (!v.startDate) throw badResquestError("Start Date is required");
       if (!v.endDate) throw badResquestError("End Data is required");
     });
@@ -62,9 +63,7 @@ class VacationService {
     //validação da quantidade de dias e de fracionamento de férias
     isValidVacationDays(vacation);
 
-    const employee = await employeeRepository.FindByEmployeeId(
-      vacation[0].employeeId
-    );
+    const employee = await employeeRepository.FindByEmployeeId(employeeId);
     if (!employee) throw notFoundError("Employee don't exist");
 
     //validação se funcionario pode tirar férias
@@ -82,7 +81,7 @@ class VacationService {
     const existingVacations = employee.vacationPeriods;
     isOverlappingVacation(vacation, existingVacations);
 
-    return await vacationRepository.create(vacation);
+    return await vacationRepository.create(employeeId, vacation);
   }
 }
 
