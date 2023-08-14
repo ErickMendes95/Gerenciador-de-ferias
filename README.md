@@ -1,4 +1,4 @@
-# Seu Projeto Next.js com Node.js
+# Gerenciador de Férias
 
 Este é um projeto desenvolvido com Next.js e Node.js. Ele consiste em uma parte de frontend e uma parte de backend.
 
