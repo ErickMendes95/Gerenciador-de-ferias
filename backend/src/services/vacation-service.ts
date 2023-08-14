@@ -15,8 +15,21 @@ function isValidVacationDays(vacation: Vacation[]) {
     const endDate = dayjs(v.endDate);
     const vacationNumberOfDays = endDate.diff(startDate, "day") + 1;
 
+    if (startDate < dayjs() || endDate < dayjs()) {
+      throw badResquestError(
+        "A data das férias não pode ser anterior ao dia atual"
+      );
+    }
+
+    const oneYearFromNow = dayjs().add(1, "year");
+    if (startDate.isAfter(oneYearFromNow) || endDate.isAfter(oneYearFromNow)) {
+      throw badResquestError(
+        "As férias colocadas passam do período de um ano permitido"
+      );
+    }
+
     if (vacationNumberOfDays < 5) {
-      throw badResquestError("Number of days is less than 5");
+      throw badResquestError("Número de dias é menor que 5");
     }
     if (vacationNumberOfDays >= 14 && !hasVacationWith14Days) {
       hasVacationWith14Days = true;
@@ -25,10 +38,10 @@ function isValidVacationDays(vacation: Vacation[]) {
   });
 
   if (hasVacationWith14Days === false)
-    throw badResquestError("One of the vacations need to be at least 14 days");
+    throw badResquestError("Uma das férias precisa ter pelo menos 14 dias");
 
   if (durationInDays !== 30)
-    throw badResquestError("Sum of number of days is different than 30");
+    throw badResquestError("A soma dos dias é diferente de 30");
 }
 function isOverlappingVacation(
   vacations: Vacation[],
@@ -45,7 +58,7 @@ function isOverlappingVacation(
           dayjs(vacation.endDate) >= dayjs(existingVacation.endDate))
       ) {
         throw badResquestError(
-          "New vacation period overlaps with an existing vacation"
+          "O período inserido conflui com uma férias já existente"
         );
       }
     }
@@ -53,19 +66,20 @@ function isOverlappingVacation(
 }
 class VacationService {
   async create(employeeId: number, vacation: Vacation[]) {
-    if (!employeeId) throw badResquestError("Employee Id is required");
+    if (!employeeId) throw badResquestError("Id do funcionário é necessário");
 
     vacation.map((v) => {
-      if (!v.startDate) throw badResquestError("Start Date is required");
-      if (!v.endDate) throw badResquestError("End Data is required");
+      if (!v.startDate)
+        throw badResquestError("Data de início das férias é necessário");
+      if (!v.endDate)
+        throw badResquestError("Data de fim das férias é necessário");
     });
 
     //validação da quantidade de dias e de fracionamento de férias
     isValidVacationDays(vacation);
 
     const employee = await employeeRepository.FindByEmployeeId(employeeId);
-    if (!employee) throw notFoundError("Employee don't exist");
-
+    if (!employee) throw notFoundError("Funcionário não existe");
     //validação se funcionario pode tirar férias
     const today = dayjs();
     const hireDate = dayjs(employee.hireDate);
@@ -73,15 +87,26 @@ class VacationService {
 
     if (monthsSinceHire < 12) {
       throw unauthorizedError(
-        "Employee doesn't have more than 1 year of contract"
+        "Funcionário não possui mais de um ano de contrato"
       );
+    }
+
+    if (!employee.canTakeVacation) {
+      throw unauthorizedError("Usuário já tirou a férias anual");
     }
 
     //validação se as férias informadas sobrepoe alguma outra férias já existente
     const existingVacations = employee.vacationPeriods;
     isOverlappingVacation(vacation, existingVacations);
 
-    return await vacationRepository.create(employeeId, vacation);
+    const vacationCreated = await vacationRepository.create(
+      employeeId,
+      vacation
+    );
+    const canTakeVacation = false;
+    await vacationRepository.updateCanTakeVacation(employeeId, canTakeVacation);
+
+    return vacationCreated;
   }
 }
 

@@ -19,6 +19,27 @@ class VacationRepository {
     await Promise.all(vacationPromises);
     return createdVacations;
   }
+
+  async updateCanTakeVacation(employeeId: number, canTakeVacation:boolean){
+    await prisma.employee.update({
+      where: {id: employeeId},
+      data: {canTakeVacation}
+    })
+  }
+
+  async updateCanTakeVacationByCron(
+    employeeId: number,
+    canTakeVacationBoolean: boolean,
+    lastCanTakeVacationDate: Date
+  ) {
+    await prisma.employee.update({
+      where: { id: employeeId },
+      data: {
+        canTakeVacation: canTakeVacationBoolean,
+        lastCanTakeVacationUpdate: lastCanTakeVacationDate,
+      },
+    });
+  }
 }
 
 export default new VacationRepository();

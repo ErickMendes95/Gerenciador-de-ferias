@@ -5,5 +5,5 @@ const employeeRouter = express.Router();
 
 employeeRouter.post("/employee", employeeController.create);
 employeeRouter.get("/employee", employeeController.getAll);
-
+employeeRouter.put("/employee/:id/canTakeVacationByCron", employeeController.updateCanTakeVacationByCron)
 export { employeeRouter };

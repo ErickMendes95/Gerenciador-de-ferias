@@ -12,7 +12,8 @@ export default function Home() {
   useEffect(() => {
     async function fetchEmployees() {
       const response = await axios.get("http://localhost:4000/employee");
-      setEmployees(response.data);
+      const sortedEmployees = response.data.sort((a, b) => a.id - b.id);
+      setEmployees(sortedEmployees);
       setLoading(false);
     }
     fetchEmployees();

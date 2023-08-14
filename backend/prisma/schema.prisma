@@ -8,13 +8,14 @@ datasource db {
 }
 
 model Employee {
-    id              Int        @id @default(autoincrement())
-    name            String
-    role            String
-    hireDate        DateTime
-    canTakeVacation Boolean    @default(false)
-    vacationPeriods Vacation[]
-    createdAt       DateTime   @default(now())
+    id                        Int        @id @default(autoincrement())
+    name                      String
+    role                      String
+    hireDate                  DateTime
+    canTakeVacation           Boolean    @default(false)
+    lastCanTakeVacationUpdate DateTime?
+    vacationPeriods           Vacation[]
+    createdAt                 DateTime   @default(now())
 }
 
 model Vacation {

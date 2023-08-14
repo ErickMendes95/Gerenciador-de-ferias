@@ -2,6 +2,8 @@ export type Employee = {
   name: string;
   role: string;
   hireDate: Date;
+  canTakeVacation?: boolean;
+  lastCanTakeVacationUpdate?: Date;
 };
 
 export type ApplicationError = {
