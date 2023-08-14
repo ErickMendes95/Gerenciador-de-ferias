@@ -36,6 +36,10 @@ export default function Home() {
             <div className="flex items-center justify-center">
               Carregando...
             </div>
+          ) : employees.length === 0 ? (
+            <div className="flex items-center justify-center">
+              Não existe nenhum funcionário.
+            </div>
           ) : (
             employees.map((employee) => (
               <EmployeeCard
