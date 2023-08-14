@@ -1,6 +1,6 @@
 # Gerenciador de Férias
 
-Este é um projeto desenvolvido com Next.js e Node.js. Ele consiste em uma parte de frontend e uma parte de backend.
+Este é um projeto fullstack desenvolvido com Next.js e Node.js
 
 ## Rodando o Projeto Localmente
 
